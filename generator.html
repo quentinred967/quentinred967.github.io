@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generator</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
+
+    input, textarea {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      background: black;
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Создать билет</h2>
+
+<input id="receiver" placeholder="Получатель">
+<input id="start" type="datetime-local">
+<input id="end" type="datetime-local">
+<input id="desc" placeholder="Описание">
+<input id="price" placeholder="Цена">
+
+<button onclick="generate()">Создать</button>
+
+<script>
+function generate() {
+  const data = {
+    receiver: document.getElementById("receiver").value,
+    start: new Date(document.getElementById("start").value).toISOString(),
+    end: new Date(document.getElementById("end").value).toISOString(),
+    desc: document.getElementById("desc").value,
+    price: document.getElementById("price").value
+  };
+
+  localStorage.setItem("ticket", JSON.stringify(data));
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>

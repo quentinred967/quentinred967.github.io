@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cashew Ticket</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+      background: #f2f2f2;
+    }
+
+    .header {
+      background: #fff;
+      padding: 18px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #ff5a2c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .card {
+      margin: 16px;
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .qr {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    #qrcode {
+      width: 240px;
+      height: 240px;
+    }
+
+    .status-icon {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 42px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .valid { background: #2ecc71; }
+    .invalid { background: #e53935; }
+
+    .text-block {
+      color: #333;
+      line-height: 1.5;
+      font-size: 16px;
+    }
+
+    .label {
+      color: #888;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+
+    .footer {
+      margin-top: 30px;
+      background: #3b73a6;
+      color: white;
+      text-align: center;
+      padding: 30px 10px;
+      font-size: 18px;
+    }
+
+    .footer small {
+      display: block;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="logo">◡</div>
+  <h1>cashew</h1>
+</div>
+
+<div class="card">
+  <div class="qr">
+    <div id="qrcode"></div>
+    <div id="status" class="status-icon">×</div>
+  </div>
+
+  <div class="text-block">
+    <div class="label">Получатель:</div>
+    <div id="receiver"></div>
+
+    <div class="label">Активен с:</div>
+    <div id="start"></div>
+
+    <div class="label">Активен до:</div>
+    <div id="end"></div>
+
+    <div class="label">Описание:</div>
+    <div id="desc"></div>
+
+    <div class="label">Цена:</div>
+    <div id="price"></div>
+  </div>
+</div>
+
+<div class="footer">
+  Cashew
+  <small>info@cashew.me</small>
+</div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("ticket"));
+
+if (!data) {
+  data = {
+    receiver: "ТЕСТ: автобус №26107",
+    start: "2025-06-15T20:22:00+03:00",
+    end: "2025-06-15T21:22:00+03:00",
+    desc: "#test123#",
+    price: "0.9 BYN"
+  };
+}
+
+document.getElementById("receiver").innerText = data.receiver;
+document.getElementById("start").innerText = formatDate(data.start);
+document.getElementById("end").innerText = formatDate(data.end);
+document.getElementById("desc").innerText = data.desc;
+document.getElementById("price").innerText = data.price;
+
+new QRCode(document.getElementById("qrcode"), {
+  text: data.desc,
+  width: 240,
+  height: 240
+});
+
+function checkStatus() {
+  const now = new Date();
+  const start = new Date(data.start);
+  const end = new Date(data.end);
+  const el = document.getElementById("status");
+
+  if (now >= start && now <= end) {
+    el.className = "status-icon valid";
+    el.innerHTML = "✔";
+  } else {
+    el.className = "status-icon invalid";
+    el.innerHTML = "×";
+  }
+}
+
+setInterval(checkStatus, 1000);
+checkStatus();
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  const pad = n => n.toString().padStart(2, '0');
+  return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+</script>
+
+</body>
+</html>
